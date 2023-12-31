@@ -19,7 +19,7 @@ const timePerTick = 1000 / 60;
 let shapeList = [];
 
 // boardMatrice of the shapes that are already set on ground
-let boardMatrice = [...Array(HEIGHT / TILESIZE)].map(e => Array(WIDTH / TILESIZE));
+let boardMatrice = [...Array(HEIGHT / TILESIZE)].map(e => Array(WIDTH / TILESIZE).fill(0));
 setCurrentShape(generateRandomShape());
 
 
@@ -43,8 +43,7 @@ function gameLoop(timeStamp: number) {
 function tick() {
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
-  if (currentShape().y >= HEIGHT - TILESIZE) {
-    console.log(currentShape());
+  if (currentShape().y >= HEIGHT - TILESIZE ||  !canMoveDown(currentShape())) {
     addShapeToBoard(currentShape());
     setCurrentShape(generateRandomShape());
   }
@@ -58,14 +57,13 @@ function tick() {
     } else {
       countToMove = moveCounterForSpeedup--;
     }
-    shapeList[shapeList.length - 1].y += TILESIZE;
+    currentShape().y += TILESIZE;
   }
 }
 
 function render() {
   canvas.clearRect(0, 0, WIDTH, HEIGHT);
   for (let index = 0; index < shapeList.length; index++) {
-
     // for every shape we draw the full matrice
     for (let i = 0; i < shapeList[index].mDefinition.length; i++) {
       for (let j = 0; j < shapeList[index].mDefinition[i].length; j++) {
@@ -76,6 +74,7 @@ function render() {
   }
 }
 
+// returns the last shape in list which we consider to be the current
 function currentShape() {
   return shapeList[shapeList.length - 1]
 }
@@ -93,6 +92,28 @@ function addShapeToBoard(shapeObj) {
       let row = (shapeObj.y / TILESIZE) + i
       let col = (shapeObj.x / TILESIZE) + j
       boardMatrice[row][col] = shapeObj.mDefinition[i][j];
+    }
+  }
+}
+
+// check if shape can move down
+function canMoveDown(shapeObj) {
+  for (let i = 0; i < shapeObj.mDefinition.length; i++) {
+    for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
+      // setting row of boardmatrice with the parts that were already done
+
+      let row = (shapeObj.y / TILESIZE) + i
+      let col = (shapeObj.x / TILESIZE) + j
+
+      if (boardMatrice.length <= row + 1) {
+        return false
+      }
+      // todo check if the other array index is out of range as well
+      if (boardMatrice[row + 1][col] != 0) {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 }
