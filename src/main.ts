@@ -8,17 +8,19 @@ const c = document.getElementById("game") as HTMLCanvasElement;
 const canvas = c.getContext("2d")!;
 const WIDTH = 500;
 const HEIGHT = 750;
-let movingShape = generateRandomShape();
-let moving = false;
 // counter to how many ticks it takes to move one down, fast rn because debuggin
-let moveCounterForSpeedup = 8;
+let moveCounterForSpeedup = 5;
 
 // how many pending ticks it actually takes to move
 let countToMove = 30;
 let oldTime = 0;
 const timePerTick = 1000 / 60;
-// list of shapes that are already set
-let shapeList = [movingShape];
+// list of shapes that are already set, we set one for the start
+let shapeList = [];
+
+// boardMatrice of the shapes that are already set on ground
+let boardMatrice = [...Array(HEIGHT / TILESIZE)].map(e => Array(WIDTH / TILESIZE));
+setCurrentShape(generateRandomShape());
 
 
 
@@ -41,9 +43,10 @@ function gameLoop(timeStamp: number) {
 function tick() {
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
-  if (shapeList[shapeList.length - 1].y >= HEIGHT - TILESIZE) {
-    shapeList.push(movingShape);
-    movingShape = generateRandomShape();
+  if (currentShape().y >= HEIGHT - TILESIZE) {
+    console.log(currentShape());
+    addShapeToBoard(currentShape());
+    setCurrentShape(generateRandomShape());
   }
 
   // update y position and get faster the more objects are created speedup removed for debuggin
@@ -69,6 +72,27 @@ function render() {
         canvas.fillRect(shapeList[index].x + j * TILESIZE, shapeList[index].y + i * TILESIZE, TILESIZE, TILESIZE);
         canvas.fillStyle = shapeList[index].color;
       }
+    }
+  }
+}
+
+function currentShape() {
+  return shapeList[shapeList.length - 1]
+}
+
+function setCurrentShape(shapeObj) {
+  shapeList.push(shapeObj);
+}
+
+// this adds a shape to the board so we can easily check for collision inside our board grid
+function addShapeToBoard(shapeObj) {
+  for (let i = 0; i < shapeObj.mDefinition.length; i++) {
+    for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
+      // setting row of boardmatrice with the parts that were already done
+
+      let row = (shapeObj.y / TILESIZE) + i
+      let col = (shapeObj.x / TILESIZE) + j
+      boardMatrice[row][col] = shapeObj.mDefinition[i][j];
     }
   }
 }
