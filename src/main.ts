@@ -1,4 +1,4 @@
-import { TILESIZE, IBLOCK } from "./game_blocks.js";
+import { TILESIZE } from "./game_blocks.js";
 import './style.css';
 import { generateRandomShape, shape } from './shape.ts';
 
@@ -23,6 +23,34 @@ let boardMatrice = [...Array(HEIGHT / TILESIZE)].map(e => Array(WIDTH / TILESIZE
 setCurrentShape(generateRandomShape());
 
 
+// i mean this even runs faster than 60 fps basically so idk how great that will work
+document.onkeydown = function(e) {
+  // 1 for left, 2 for right, 3 for down
+  switch (e.key) {
+    case "a":
+      moveLeft();
+      break;
+    case "d":
+      moveRight();
+      break;
+    case "s":
+      moveDown();
+      break;
+    case "ArrowLeft":
+      moveLeft();
+      break;
+    case "ArrowRight":
+      moveRight();
+      break;
+    case "ArrowDown":
+      moveDown();
+      break;
+    default:
+      break;
+  }
+  e.preventDefault();
+  // update on eventkey
+};
 
 window.requestAnimationFrame(gameLoop);
 
@@ -43,22 +71,13 @@ function gameLoop(timeStamp: number) {
 function tick() {
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
-  if (currentShape().y >= HEIGHT - TILESIZE ||  !canMoveDown(currentShape())) {
+  if (currentShape().y >= HEIGHT - TILESIZE || !canMoveDown()) {
     addShapeToBoard(currentShape());
     setCurrentShape(generateRandomShape());
   }
 
-  // update y position and get faster the more objects are created speedup removed for debuggin
-  countToMove--
-  if (countToMove == 0) {
-    // if we have 20 objects created we stop speeding up and just plainly set it to 10
-    if (moveCounterForSpeedup <= 5) {
-      countToMove = moveCounterForSpeedup;
-    } else {
-      countToMove = moveCounterForSpeedup--;
-    }
-    currentShape().y += TILESIZE;
-  }
+  // moves the tile with speed up
+  move();
 }
 
 function render() {
@@ -96,24 +115,95 @@ function addShapeToBoard(shapeObj) {
   }
 }
 
-// check if shape can move down
-function canMoveDown(shapeObj) {
+
+// checks if it can move left and moves the currentShape
+function moveLeft() {
+  let shapeObj = currentShape();
   for (let i = 0; i < shapeObj.mDefinition.length; i++) {
     for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
-      // setting row of boardmatrice with the parts that were already done
 
-      let row = (shapeObj.y / TILESIZE) + i
-      let col = (shapeObj.x / TILESIZE) + j
+      // board row and col to check, with a shift for the one we are trying to check
+      let row = (shapeObj.y / TILESIZE) + i;
+      let col = (shapeObj.x / TILESIZE) + j - 1;
 
-      if (boardMatrice.length <= row + 1) {
-        return false
-      }
-      // todo check if the other array index is out of range as well
-      if (boardMatrice[row + 1][col] != 0) {
+      if (colliding(row, col)) {
         return false;
-      } else {
-        return true;
       }
     }
   }
+  shapeObj.x -= TILESIZE;
 }
+
+function moveRight() {
+  let shapeObj = currentShape();
+  for (let i = 0; i < shapeObj.mDefinition.length; i++) {
+    for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
+
+      // board row and col to check, with a shift for the one we are trying to check
+      let row = (shapeObj.y / TILESIZE) + i;
+      let col = (shapeObj.x / TILESIZE) + j + 1;
+
+      if (colliding(row, col)) {
+        return false;
+      }
+    }
+  }
+  shapeObj.x += TILESIZE;
+}
+
+
+// move of the game which speeds up the more objects are created
+function move() {
+  countToMove--
+  if (countToMove == 0) {
+    // stop speeding up at some point
+    if (moveCounterForSpeedup <= 5) {
+      countToMove = moveCounterForSpeedup;
+    } else {
+      countToMove = moveCounterForSpeedup--;
+    }
+
+    currentShape().y += TILESIZE;
+  }
+}
+
+function moveDown() {
+  if (canMoveDown()) {
+    currentShape().y += TILESIZE;
+  }
+}
+
+
+// this is to test if we can even move down at all in tick()
+// not for the user move down input
+function canMoveDown() {
+  let shapeObj = currentShape();
+  for (let i = 0; i < shapeObj.mDefinition.length; i++) {
+    for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
+      // board row and col to check, with a shift for the one we are trying to check
+      let row = (shapeObj.y / TILESIZE) + i + 1;
+      let col = (shapeObj.x / TILESIZE) + j;
+
+      if (colliding(row, col)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+
+// checks if given row and number would collide with a still shape
+function colliding(row: number, col: number) {
+  if (boardMatrice.length <= row) {
+    return true;
+  }
+  if (boardMatrice[row].length <= col) {
+    return true;
+  }
+  if (boardMatrice[row][col] != 0) {
+    return true;
+  }
+  true;
+}
+
