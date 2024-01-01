@@ -1,8 +1,17 @@
-import { TILESIZE, IBLOCK, JBLOCK } from "./game_blocks.ts";
+import { TILESIZE, IBLOCK, JBLOCK, LBLOCK } from "./game_blocks.ts";
 // x, y defined the place where it should be rendered
 //
+//
+type Shape = {
+  x: number;
+  y: number;
+  color: string;
+  mDefinition: number[][];
+};
+
 // the matrix is the tiles it contains
-export function shape(x: number, y: number, color: string, mDefinition) {
+export function shape(x: number, y: number, color: string, mDefinition: number[][]): Shape {
+  
   x = x + 250 - 2 * TILESIZE;
   return { x, y, color, mDefinition };
 }
@@ -12,6 +21,8 @@ export function generateRandomShape() {
   let randomShapeNum = Math.floor(Math.random() * shapeCount + 1);
   let randomShape;
 
+  // for debugging TODO:
+  return generateLBLOCK();
   switch (randomShapeNum) {
     case 1:
       randomShape = generateJBLOCK();
@@ -52,4 +63,8 @@ export function generateIBLOCK() {
 
 export function generateJBLOCK() {
   return shape(0, 0, "#00ffff", JBLOCK);
+}
+
+export function generateLBLOCK() {
+  return shape(0, 0, "#00ffff", LBLOCK);
 }
