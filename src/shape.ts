@@ -10,10 +10,8 @@ export type Shape = {
 
 // the matrix is the tiles it contains
 export function shape(x: number, y: number, color: string, mDefinition: number[][]): Shape {
-  // 250 is half of the width and a bit of minus because its mostly in the middle but can change this nicely
-  // TODO change this to be in the middle with width taken from the WIDTH constant
-  // maybe just fix this with making all the matrices 4x2
-  x = x + 250 - 2 * constants.TILESIZE;
+  let offset = Math.floor(mDefinition[0].length / 2) * constants.TILESIZE;
+  x = constants.TILESIZE * 5 - offset;
   return { x, y, color, mDefinition };
 }
 
