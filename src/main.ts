@@ -1,6 +1,6 @@
 import { TILESIZE } from "./game_blocks.js";
 import './style.css';
-import { generateRandomShape } from './shape.ts';
+import { Shape, generateRandomShape } from './shape.ts';
 
 // fyi: added shape names and such to readme
 
@@ -16,7 +16,7 @@ let countToMove: number = 30;
 let oldTime: number = 0;
 const timePerTick: number = 1000 / 60;
 // list of shapes that are already set, we set one for the start
-let shapeList: number[][] = [];
+let shapeList: Shape[] = [];
 
 // boardMatrice of the shapes that are already set on ground
 let boardMatrice: number[][] = [...Array(HEIGHT / TILESIZE)].map(() => Array(WIDTH / TILESIZE).fill(0));
@@ -109,7 +109,7 @@ function render() {
 }
 
 // returns the last shape in list which we consider to be the current
-function currentShape() {
+function currentShape(): Shape {
   return shapeList[shapeList.length - 1]
 }
 

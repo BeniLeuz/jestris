@@ -2,7 +2,7 @@ import * as mDefinitionsShapes from "./game_blocks.ts";
 // x, y defined the place where it should be rendered
 //
 //
-type Shape = {
+export type Shape = {
   x: number;
   y: number;
   color: string;
@@ -18,7 +18,7 @@ export function shape(x: number, y: number, color: string, mDefinition: number[]
   return { x, y, color, mDefinition };
 }
 
-export function generateRandomShape() {
+export function generateRandomShape(): Shape {
   let shapeCount = 7;
   let randomShapeNum = Math.floor(Math.random() * shapeCount + 1);
   let randomShape;
@@ -46,6 +46,7 @@ export function generateRandomShape() {
       randomShape = generateTBLOCK();
       break;
     default:
+      randomShape = generateTBLOCK();
       break;
   }
 
