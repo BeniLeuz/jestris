@@ -93,11 +93,12 @@ function render() {
         if (tile.mDefinition[i][j] != 1) {
           continue;
         }
+
         let x = tile.x + j * TILESIZE;
         let y = tile.y + i * TILESIZE;
 
-        canvas.fillRect(x, y, TILESIZE, TILESIZE);
         canvas.fillStyle = shapeList[index].color;
+        canvas.fillRect(x, y, TILESIZE, TILESIZE);
       }
     }
   }
@@ -188,13 +189,26 @@ function moveDown() {
 // not for the user move down input
 function canMoveDown() {
   let shapeObj = currentShape();
+
   for (let i = 0; i < shapeObj.mDefinition.length; i++) {
     for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
+      if (shapeObj.mDefinition[i][j] != 1) {
+        continue;
+      }
+
       // board row and col to check, with a shift for the one we are trying to check
+      // we are bascially parsing the board indices from the x and y cords and the offset of the matrix loop
       let row = (shapeObj.y / TILESIZE) + i + 1;
       let col = (shapeObj.x / TILESIZE) + j;
+      // if its 0 we can ignore it it can go down
 
       if (colliding(row, col)) {
+        // its failing here with these weird shapes
+        // it tests for 29 17 although it should check 29 16
+        console.log(row + " " + col);
+
+        console.log(boardMatrice);
+
         return false;
       }
     }
