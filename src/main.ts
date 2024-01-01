@@ -4,12 +4,8 @@ import { Shape, generateRandomShape } from './shape.ts';
 
 // fyi: added shape names and such to readme
 
-const c: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement;
-const canvas: CanvasRenderingContext2D = c.getContext("2d") as CanvasRenderingContext2D;
-// TODO: read it out of html babes
-const WIDTH: number = 500;
-const HEIGHT: number = 750;
 // counter to how many ticks it takes to move one down, fast rn because debuggin
+// anyway kionda buggy speedup rn TODO:
 let moveCounterForSpeedup: number = 5;
 
 // how many pending ticks it actually takes to move
@@ -20,7 +16,7 @@ const timePerTick: number = 1000 / 60;
 let shapeList: Shape[] = [];
 
 // boardMatrice of the shapes that are already set on ground
-let boardMatrice: number[][] = [...Array(HEIGHT / constants.TILESIZE)].map(() => Array(WIDTH / constants.TILESIZE).fill(0));
+let boardMatrice: number[][] = [...Array(constants.HEIGHT / constants.TILESIZE)].map(() => Array(constants.WIDTH / constants.TILESIZE).fill(0));
 
 setCurrentShape(generateRandomShape());
 
@@ -76,7 +72,7 @@ function gameLoop(timeStamp: number) {
 function tick() {
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
-  if (currentShape().y >= HEIGHT - constants.TILESIZE || !canMoveDown()) {
+  if (currentShape().y >= constants.HEIGHT - constants.TILESIZE || !canMoveDown()) {
     addShapeToBoard(currentShape());
     setCurrentShape(generateRandomShape());
   }
@@ -86,7 +82,7 @@ function tick() {
 }
 
 function render() {
-  canvas.clearRect(0, 0, WIDTH, HEIGHT);
+  constants.CANVAS.clearRect(0, 0, constants.WIDTH, constants.HEIGHT);
   for (let index = 0; index < shapeList.length; index++) {
     // for every shape we draw the full matrice
     for (let i = 0; i < shapeList[index].mDefinition.length; i++) {
@@ -102,8 +98,8 @@ function render() {
         let x = tile.x + j * constants.TILESIZE;
         let y = tile.y + i * constants.TILESIZE;
 
-        canvas.fillStyle = shapeList[index].color;
-        canvas.fillRect(x, y, constants.TILESIZE, constants.TILESIZE);
+        constants.CANVAS.fillStyle = shapeList[index].color;
+        constants.CANVAS.fillRect(x, y, constants.TILESIZE, constants.TILESIZE);
       }
     }
   }
@@ -208,12 +204,6 @@ function canMoveDown() {
       // if its 0 we can ignore it it can go down
 
       if (colliding(row, col)) {
-        // its failing here with these weird shapes
-        // it tests for 29 17 although it should check 29 16
-        console.log(row + " " + col);
-
-        console.log(boardMatrice);
-
         return false;
       }
     }
