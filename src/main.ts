@@ -86,6 +86,7 @@ function render() {
     // for every shape we draw the full matrice
     for (let i = 0; i < shapeList[index].mDefinition.length; i++) {
       for (let j = 0; j < shapeList[index].mDefinition[i].length; j++) {
+        // wont work if matrix definition has 0 values to say how it is
         canvas.fillRect(shapeList[index].x + j * TILESIZE, shapeList[index].y + i * TILESIZE, TILESIZE, TILESIZE);
         canvas.fillStyle = shapeList[index].color;
       }
