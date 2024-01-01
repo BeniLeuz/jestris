@@ -1,29 +1,33 @@
 import { TILESIZE } from "./game_blocks.js";
 import './style.css';
-import { generateRandomShape, shape } from './shape.ts';
+import { generateRandomShape } from './shape.ts';
 
 // fyi: added shape names and such to readme
 
-const c = document.getElementById("game") as HTMLCanvasElement;
-const canvas = c.getContext("2d")!;
+const c: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement;
+const canvas: CanvasRenderingContext2D = c.getContext("2d") as CanvasRenderingContext2D;
 const WIDTH = 500;
 const HEIGHT = 750;
 // counter to how many ticks it takes to move one down, fast rn because debuggin
-let moveCounterForSpeedup = 5;
+let moveCounterForSpeedup: number = 5;
 
 // how many pending ticks it actually takes to move
-let countToMove = 30;
-let oldTime = 0;
-const timePerTick = 1000 / 60;
+let countToMove: number = 30;
+let oldTime: number = 0;
+const timePerTick: number = 1000 / 60;
 // list of shapes that are already set, we set one for the start
-let shapeList = [];
+let shapeList: number[][] = [];
 
 // boardMatrice of the shapes that are already set on ground
-let boardMatrice = [...Array(HEIGHT / TILESIZE)].map(e => Array(WIDTH / TILESIZE).fill(0));
+let boardMatrice: number[][] = [...Array(HEIGHT / TILESIZE)].map(() => Array(WIDTH / TILESIZE).fill(0));
+
 setCurrentShape(generateRandomShape());
 
 
 // i mean this even runs faster than 60 fps basically so idk how great that will work
+// do it like this so we can tick it in the gameloop itself. delay should also go away since we dont rely on recurring browser events
+// we only look at the keys and if its down we perma move until keyup will be triggered, nice
+// TODO: https://stackoverflow.com/questions/12273451/how-to-fix-delay-in-javascript-keydown
 document.onkeydown = function(e) {
   // 1 for left, 2 for right, 3 for down
   switch (e.key) {
