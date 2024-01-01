@@ -1,4 +1,4 @@
-import { TILESIZE } from "./game_blocks.js";
+import constants from "./constants.ts";
 import './style.css';
 import { Shape, generateRandomShape } from './shape.ts';
 
@@ -6,8 +6,9 @@ import { Shape, generateRandomShape } from './shape.ts';
 
 const c: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement;
 const canvas: CanvasRenderingContext2D = c.getContext("2d") as CanvasRenderingContext2D;
-const WIDTH = 500;
-const HEIGHT = 750;
+// TODO: read it out of html babes
+const WIDTH: number = 500;
+const HEIGHT: number = 750;
 // counter to how many ticks it takes to move one down, fast rn because debuggin
 let moveCounterForSpeedup: number = 5;
 
@@ -19,7 +20,7 @@ const timePerTick: number = 1000 / 60;
 let shapeList: Shape[] = [];
 
 // boardMatrice of the shapes that are already set on ground
-let boardMatrice: number[][] = [...Array(HEIGHT / TILESIZE)].map(() => Array(WIDTH / TILESIZE).fill(0));
+let boardMatrice: number[][] = [...Array(HEIGHT / constants.TILESIZE)].map(() => Array(WIDTH / constants.TILESIZE).fill(0));
 
 setCurrentShape(generateRandomShape());
 
@@ -75,7 +76,7 @@ function gameLoop(timeStamp: number) {
 function tick() {
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
-  if (currentShape().y >= HEIGHT - TILESIZE || !canMoveDown()) {
+  if (currentShape().y >= HEIGHT - constants.TILESIZE || !canMoveDown()) {
     addShapeToBoard(currentShape());
     setCurrentShape(generateRandomShape());
   }
@@ -98,11 +99,11 @@ function render() {
           continue;
         }
 
-        let x = tile.x + j * TILESIZE;
-        let y = tile.y + i * TILESIZE;
+        let x = tile.x + j * constants.TILESIZE;
+        let y = tile.y + i * constants.TILESIZE;
 
         canvas.fillStyle = shapeList[index].color;
-        canvas.fillRect(x, y, TILESIZE, TILESIZE);
+        canvas.fillRect(x, y, constants.TILESIZE, constants.TILESIZE);
       }
     }
   }
@@ -123,8 +124,8 @@ function addShapeToBoard(shapeObj) {
     for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
       // setting row of boardmatrice with the parts that were already done
 
-      let row = (shapeObj.y / TILESIZE) + i
-      let col = (shapeObj.x / TILESIZE) + j
+      let row = (shapeObj.y / constants.TILESIZE) + i
+      let col = (shapeObj.x / constants.TILESIZE) + j
       boardMatrice[row][col] = shapeObj.mDefinition[i][j];
     }
   }
@@ -138,15 +139,15 @@ function moveLeft() {
     for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
 
       // board row and col to check, with a shift for the one we are trying to check
-      let row = (shapeObj.y / TILESIZE) + i;
-      let col = (shapeObj.x / TILESIZE) + j - 1;
+      let row = (shapeObj.y / constants.TILESIZE) + i;
+      let col = (shapeObj.x / constants.TILESIZE) + j - 1;
 
       if (colliding(row, col)) {
         return false;
       }
     }
   }
-  shapeObj.x -= TILESIZE;
+  shapeObj.x -= constants.TILESIZE;
 }
 
 function moveRight() {
@@ -155,15 +156,15 @@ function moveRight() {
     for (let j = 0; j < shapeObj.mDefinition[i].length; j++) {
 
       // board row and col to check, with a shift for the one we are trying to check
-      let row = (shapeObj.y / TILESIZE) + i;
-      let col = (shapeObj.x / TILESIZE) + j + 1;
+      let row = (shapeObj.y / constants.TILESIZE) + i;
+      let col = (shapeObj.x / constants.TILESIZE) + j + 1;
 
       if (colliding(row, col)) {
         return false;
       }
     }
   }
-  shapeObj.x += TILESIZE;
+  shapeObj.x += constants.TILESIZE;
 }
 
 
@@ -178,13 +179,13 @@ function move() {
       countToMove = moveCounterForSpeedup--;
     }
 
-    currentShape().y += TILESIZE;
+    currentShape().y += constants.TILESIZE;
   }
 }
 
 function moveDown() {
   if (canMoveDown()) {
-    currentShape().y += TILESIZE;
+    currentShape().y += constants.TILESIZE;
   }
 }
 
@@ -202,8 +203,8 @@ function canMoveDown() {
 
       // board row and col to check, with a shift for the one we are trying to check
       // we are bascially parsing the board indices from the x and y cords and the offset of the matrix loop
-      let row = (shapeObj.y / TILESIZE) + i + 1;
-      let col = (shapeObj.x / TILESIZE) + j;
+      let row = (shapeObj.y / constants.TILESIZE) + i + 1;
+      let col = (shapeObj.x / constants.TILESIZE) + j;
       // if its 0 we can ignore it it can go down
 
       if (colliding(row, col)) {

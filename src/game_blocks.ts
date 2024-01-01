@@ -1,10 +1,13 @@
-export const TILESIZE = 25;
-export const IBLOCK = [[1, 1, 1, 1]];
-export const JBLOCK = [[1], [1, 1, 1]];
-export const LBLOCK = [[0, 0, 1], [1, 1, 1]];
-export const OBLOCK = [[1, 1], [1, 1]];
-export const TBLOCK = [[0, 1, 0], [1, 1, 1]];
+type Block = number[][];
 
-// BUG these dont work properly with collision rn
-export const SBLOCK = [[0, 1, 1], [1, 1, 0]];
-export const ZBLOCK = [[1, 1, 0], [0, 1, 1]];
+const mDefintions = {
+  JBLOCK: [[1], [1, 1, 1]]as Block,
+  LBLOCK: [[0, 0, 1], [1, 1, 1]]as Block,
+  OBLOCK: [[1, 1], [1, 1]]as Block,
+  TBLOCK: [[0, 1, 0], [1, 1, 1]]as Block,
+  IBLOCK: [[1, 1, 1, 1]]as Block,
+  SBLOCK: [[0, 1, 1], [1, 1, 0]]as Block,
+  ZBLOCK: [[1, 1, 0], [0, 1, 1]]as Block
+} as const;
+
+export default mDefintions;
