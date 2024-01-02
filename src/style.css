@@ -1,3 +1,46 @@
+*,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --nav-height: 4rem;
+}
+body {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+}
+
 canvas {
-  border: 1px solid black;
+  border: 1rem solid white;
+}
+
+body {
+  background-color: #121212;
+}
+
+.title {
+  color: white;
+  font-weight: bold;
+  font-size: 4rem;
+}
+main {
+  display: flex;
+  gap: 4rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.github {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
 }
