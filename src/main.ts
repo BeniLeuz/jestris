@@ -1,7 +1,7 @@
 import constants from "./constants.ts";
 import "./style.css";
 import { Shape, generateRandomShape } from "./shape.ts";
-import { keyState, DIRECTION} from "./controls.ts";
+import { pressedKeys, DIRECTION} from "./controls.ts";
 // fyi: added shape names and such to readme
 
 // counter to how many ticks it takes to move one down, fast rn because debuggin
@@ -20,23 +20,24 @@ let boardMatrice: number[][] = [...Array(constants.HEIGHT / constants.TILESIZE)]
 
 setCurrentShape(generateRandomShape());
 
-// i mean this even runs faster than 60 fps basically so idk how great that will work
-// do it like this so we can tick it in the gameloop itself. delay should also go away since we dont rely on recurring browser events
-// we only look at the keys and if its down we perma move until keyup will be triggered, nice
-// TODO: https://stackoverflow.com/questions/12273451/how-to-fix-delay-in-javascript-keydown
-// 1 for left, 2 for right, 3 for down
-
 function moveDirection() {
-  switch (keyState) {
-    case DIRECTION.LEFT:
-      moveLeft();
-      break;
-    case DIRECTION.RIGHT:
-      moveRight();
-      break;
-    case DIRECTION.DOWN:
-      moveDown();
-      break;
+  if (pressedKeys[DIRECTION.LEFT]) {
+    moveLeft();
+  }
+  if (pressedKeys[DIRECTION.RIGHT]) {
+    moveRight();
+  }
+  if (pressedKeys[DIRECTION.DOWN]) {
+    moveDown();
+  }
+  if (pressedKeys[DIRECTION.LEFTARROW]) {
+    moveLeft();
+  }
+  if (pressedKeys[DIRECTION.RIGHTARROW]) {
+    moveRight();
+  }
+  if (pressedKeys[DIRECTION.DOWNARROW]) {
+    moveDown();
   }
 }
 
@@ -57,15 +58,16 @@ function gameLoop(timeStamp: number) {
 }
 
 function tick() {
-
-  moveDirection();
   // if movingshape empty add one todo: more like if (collided create new one)
   // if last item in shapelist is collided with another matrice we create a new one
   if (currentShape().y >= constants.HEIGHT - constants.TILESIZE || !canMoveDown()) {
     addShapeToBoard(currentShape());
     setCurrentShape(generateRandomShape());
+    // TODO: have some  time to move the shape before it gets stuck
   }
-
+ 
+  // looks at inputs and moves
+  moveDirection();
   // moves the tile with speed up
   move();
 }
