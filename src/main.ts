@@ -92,8 +92,10 @@ function render() {
   constants.CANVAS.clearRect(0, 0, constants.WIDTH, constants.HEIGHT);
   for (let i = 0; i < boardMatrice.length; i++) {
     for (let j = 0; j < boardMatrice[i].length; j++) {
+
+
       if (boardMatrice[i][j] != 0) {
-        constants.CANVAS.fillStyle = "red";
+        constants.CANVAS.fillStyle = chooseColor(boardMatrice[i][j]);
         constants.CANVAS.fillRect(j * constants.TILESIZE, i * constants.TILESIZE, constants.TILESIZE, constants.TILESIZE);
       }
     }
@@ -102,13 +104,42 @@ function render() {
   // render the current moving shape
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
-      if (currentShape().mDefinition[i][j] != 1) {
+      if (currentShape().mDefinition[i][j] == 0) {
         continue;
       }
       constants.CANVAS.fillStyle = currentShape().color;
       constants.CANVAS.fillRect(currentShape().x + j * constants.TILESIZE, currentShape().y + i * constants.TILESIZE, constants.TILESIZE, constants.TILESIZE);
     }
   }
+}
+
+function chooseColor(shapeNumber: number): string {
+  let color: string = "#ffffff";
+
+  switch (shapeNumber) {
+    case 1:
+      color = "#0000ff";
+      break;
+    case 2:
+      color = "#00ffff";
+      break;
+    case 3:
+      color = "#ff7f00";
+      break;
+    case 4:
+      color = "#ffff00";
+      break;
+    case 5:
+      color = "#00ff00";
+      break;
+    case 6:
+      color = "#ff0000";
+      break;
+    case 7:
+      color = "#800080";
+      break;
+  }
+  return color;
 }
 
 // returns the last shape in list which we consider to be the current
@@ -127,7 +158,7 @@ function addShapeToBoard() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
 
-      if (currentShape().mDefinition[i][j] != 1) {
+      if (currentShape().mDefinition[i][j] == 0) {
         continue;
       }
 
@@ -143,7 +174,7 @@ function moveLeft() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
       // board row and col to check, with a shift for the one we are trying to check
-      if (currentShape().mDefinition[i][j] != 1) {
+      if (currentShape().mDefinition[i][j] == 0) {
         continue;
       }
       let row = currentShape().y / constants.TILESIZE + i;
@@ -162,7 +193,7 @@ function moveRight() {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
       // board row and col to check, with a shift for the one we are trying to check
 
-      if (currentShape().mDefinition[i][j] != 1) {
+      if (currentShape().mDefinition[i][j] == 0) {
         continue;
       }
 
@@ -200,7 +231,7 @@ function moveDown() {
 function canMoveDown() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
-      if (currentShape().mDefinition[i][j] != 1) {
+      if (currentShape().mDefinition[i][j] == 0) {
         continue;
       }
 
