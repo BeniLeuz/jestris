@@ -68,8 +68,7 @@ function gameLoop(timeStamp: number) {
 }
 
 function tick() {
-  // if movingshape empty add one todo: more like if (collided create new one)
-  // if last item in shapelist is collided with another matrice we create a new one
+  removeFullLines();
   if (!canMoveDown()) {
     addShapeToBoard();
     setCurrentShape(generateRandomShape());
@@ -161,7 +160,7 @@ function moveRight() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
       // board row and col to check, with a shift for the one we are trying to check
-      
+
       if (currentShape().mDefinition[i][j] != 1) {
         continue;
       }
@@ -230,4 +229,15 @@ export function colliding(row: number, col: number) {
     return true;
   }
   false;
+}
+
+// removes the full lines
+function removeFullLines() {
+  for (let i = 0; i < boardMatrice.length; i++) {
+    let row = boardMatrice[i];
+    if (row.every((value) => value != 0)) {
+      boardMatrice.splice(i, 1);
+      boardMatrice.unshift(Array(constants.WIDTH / constants.TILESIZE).fill(0));
+    }
+  }
 }
