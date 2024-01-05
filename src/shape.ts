@@ -25,29 +25,8 @@ export function shape(x: number, y: number, color: string, mDefinition: number[]
   return { x, y, color, mDefinition: mDefinitionCopy };
 }
 
-
 export function rotateShape(): boolean {
-  // i = 0
-  // j = 0, 1, 2
-  // 00, 01, 02
-  // 02, 12, 22
-
-  // i = 1
-  // j = 0, 1, 2
-  // 10, 11, 12
-  // 01, 11, 21
-
-
-  // i = 2
-  // j = 0, 1, 2
-  // 20, 21, 22
-  // 00, 10, 20
-  // todo: do this inplace without temp
-  // todo: check if rotation would collide with other shapes or out of bounds
-  // todo: create wallkicks if it would collide or block it from rotating
-
   let temp = [];
-
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     temp.push(currentShape().mDefinition[i].slice())
   }
@@ -57,32 +36,19 @@ export function rotateShape(): boolean {
 
       let newColIndex = currentShape().mDefinition.length - 1 - i;
       currentShape().mDefinition[j][newColIndex] = temp[i][j];
-    }
-  }
 
-  if (checkCollision()) {
-    currentShape().mDefinition = temp;
+      // check the new positions if they would collide if yes reset to original mDefinition
+      let row = currentShape().y / constants.TILESIZE + j;
+      let col = currentShape().x / constants.TILESIZE + newColIndex;
+
+      if (colliding(row, col)) {
+        currentShape().mDefinition = temp;
+        // todo wall kick attempts
+        return false;
+      }
+    }
   }
   return true;
-}
-
-
-
-function checkCollision(): boolean {
-  for(let i = 0; i < currentShape().mDefinition.length; i++) {
-    for(let j = 0; j < currentShape().mDefinition[i].length; j++) {
-      if(currentShape().mDefinition[i][j] != 1) {
-        continue;
-      }
-
-      let row = currentShape().y / constants.TILESIZE + i;
-      let col = currentShape().x / constants.TILESIZE + j;
-      if(colliding(row, col)) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 export function generateRandomShape(): Shape {
