@@ -26,7 +26,7 @@ export function shape(x: number, y: number, color: string, mDefinition: number[]
 }
 
 
-export function rotateShape(shape: Shape): boolean {
+export function rotateShape(): boolean {
   // i = 0
   // j = 0, 1, 2
   // 00, 01, 02
@@ -48,25 +48,27 @@ export function rotateShape(shape: Shape): boolean {
 
   let temp = [];
 
-  for (let i = 0; i < shape.mDefinition.length; i++) {
-    temp.push(shape.mDefinition[i].slice())
+  for (let i = 0; i < currentShape().mDefinition.length; i++) {
+    temp.push(currentShape().mDefinition[i].slice())
   }
 
-  for (let i = 0; i < shape.mDefinition.length; i++) {
-    for (let j = 0; j < shape.mDefinition[i].length; j++) {
+  for (let i = 0; i < currentShape().mDefinition.length; i++) {
+    for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
 
-      let newColIndex = shape.mDefinition.length - 1 - i;
-      shape.mDefinition[j][newColIndex] = temp[i][j];
+      let newColIndex = currentShape().mDefinition.length - 1 - i;
+      currentShape().mDefinition[j][newColIndex] = temp[i][j];
     }
   }
 
-  if (checkCollision(shape.mDefinition)) {
-    shape.mDefinition = temp;
+  if (checkCollision()) {
+    currentShape().mDefinition = temp;
   }
   return true;
 }
 
-function checkCollision(rollBackShape: number[][]): boolean {
+
+
+function checkCollision(): boolean {
   for(let i = 0; i < currentShape().mDefinition.length; i++) {
     for(let j = 0; j < currentShape().mDefinition[i].length; j++) {
       if(currentShape().mDefinition[i][j] != 1) {

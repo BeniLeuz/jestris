@@ -229,5 +229,5 @@ export function colliding(row: number, col: number) {
   if (boardMatrice[row][col] != 0) {
     return true;
   }
-  true;
+  false;
 }
