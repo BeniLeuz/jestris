@@ -27,22 +27,22 @@ export function shape(x: number, y: number, color: string, mDefinition: number[]
 
 export function rotateShape(): boolean {
   let temp = [];
-  for (let i = 0; i < currentShape().mDefinition.length; i++) {
-    temp.push(currentShape().mDefinition[i].slice())
+  for (let i = 0; i < currentShape.mDefinition.length; i++) {
+    temp.push(currentShape.mDefinition[i].slice())
   }
 
-  for (let i = 0; i < currentShape().mDefinition.length; i++) {
-    for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
+  for (let i = 0; i < currentShape.mDefinition.length; i++) {
+    for (let j = 0; j < currentShape.mDefinition[i].length; j++) {
 
-      let newColIndex = currentShape().mDefinition.length - 1 - i;
-      currentShape().mDefinition[j][newColIndex] = temp[i][j];
+      let newColIndex = currentShape.mDefinition.length - 1 - i;
+      currentShape.mDefinition[j][newColIndex] = temp[i][j];
 
       // check the new positions if they would collide if yes reset to original mDefinition
-      let row = currentShape().y / constants.TILESIZE + j;
-      let col = currentShape().x / constants.TILESIZE + newColIndex;
+      let row = currentShape.y / constants.TILESIZE + j;
+      let col = currentShape.x / constants.TILESIZE + newColIndex;
 
       if (colliding(row, col)) {
-        currentShape().mDefinition = temp;
+        currentShape.mDefinition = temp;
         // todo wall kick attempts
         return false;
       }
