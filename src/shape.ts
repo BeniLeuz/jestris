@@ -20,8 +20,6 @@ export function generateRandomShape(): Shape {
   let randomShapeNum = Math.floor(Math.random() * shapeCount + 1);
   let randomShape;
 
-
-  return generateOBLOCK();
   switch (randomShapeNum) {
     case 1:
       randomShape = generateJBLOCK();

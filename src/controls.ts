@@ -13,7 +13,8 @@ export const DIRECTION = {
 
 type Direction = (typeof DIRECTION)[keyof typeof DIRECTION];
 
-export let pressedKeys = {};
+// but how disgusting is this typedefini.., ehm typeannotation btw :D
+export let pressedKeys: { [Identifier: string]: boolean } = {};
 
 document.onkeydown = (e: KeyboardEvent) => {
   e.preventDefault();
@@ -23,6 +24,5 @@ document.onkeydown = (e: KeyboardEvent) => {
 
 document.onkeyup = (e: KeyboardEvent) => {
   e.preventDefault();
-  // nice eliminated whole switch statement
   pressedKeys[e.key] = false;
 };

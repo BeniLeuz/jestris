@@ -1,15 +1,21 @@
 import constants from "./constants.ts";
 import "./style.css";
 import { Shape, generateRandomShape } from "./shape.ts";
-import { pressedKeys, DIRECTION } from "./controls.ts";
+import { pressedKeys, DIRECTION, updateKeyUp } from "./controls.ts";
 // fyi: added shape names and such to readme
 
-// counter to how many ticks it takes to move one down, fast rn because debuggin
-// anyway kionda buggy speedup rn TODO:
-let moveCounterForSpeedup: number = 5;
 
-// how many pending ticks it actually takes to move
+// objectmoving/speedup setup
+const moveCounter: number = 30;
 let countToMove: number = 30;
+let objectsCreated: number = 0;
+
+// directional moving slowdown
+// TODO: fix this, feels bad. We kind of cant have hold and keypresses both being nice and instant
+const moveDirectionCounterStatic = 4;
+let directionalMoveCounter: number = moveDirectionCounterStatic;
+
+
 let oldTime: number = 0;
 const timePerTick: number = 1000 / 60;
 // list of shapes that are already set, we set one for the start
@@ -20,7 +26,7 @@ let boardMatrice: number[][] = [...Array(constants.HEIGHT / constants.TILESIZE)]
 
 setCurrentShape(generateRandomShape());
 
-function moveDirection() {
+function moveDirection(): void {
   if (pressedKeys[DIRECTION.LEFT]) {
     moveLeft();
   }
@@ -66,10 +72,17 @@ function tick() {
     // TODO: have some  time to move the shape before it gets stuck
   }
 
-  // looks at inputs and moves
-  // moves the tile with speed up
-  // setting undefined board matrice 20/4
-  moveDirection();
+
+  // issue with this is: a single keypress will not always move the shape
+  // but if we change it other way it will have nice single keypresses but holds will be too long
+  directionalMoveCounter--;
+  if (directionalMoveCounter <= 0) {
+    moveDirection();
+    directionalMoveCounter = moveDirectionCounterStatic;
+  }
+
+
+
   move();
 }
 
@@ -102,6 +115,8 @@ function currentShape(): Shape {
 }
 
 function setCurrentShape(shapeObj: Shape) {
+  // counter for speedup
+  objectsCreated++;
   shapeList.push(shapeObj);
 }
 
@@ -113,9 +128,6 @@ function addShapeToBoard() {
 
       let row = currentShape().y / constants.TILESIZE + i;
       let col = currentShape().x / constants.TILESIZE + j;
-      console.log("setting board matrice");
-      console.log(row, col);
-      console.log(boardMatrice)
       boardMatrice[row][col] = currentShape().mDefinition[i][j];
     }
   }
@@ -152,17 +164,13 @@ function moveRight() {
   currentShape().x += constants.TILESIZE;
 }
 
-// move of the game which speeds up the more objects are created
 function move() {
   if (canMoveDown()) {
     countToMove--;
     if (countToMove == 0) {
-      // stop speeding up at some point
-      if (moveCounterForSpeedup <= 5) {
-        countToMove = moveCounterForSpeedup;
-      } else {
-        countToMove = moveCounterForSpeedup--;
-      }
+      // every object which is created speeds up the game until move per 10 ticks
+      let speedUpCounter = moveCounter - objectsCreated
+      countToMove = speedUpCounter > 10 ? speedUpCounter : 10;
       currentShape().y += constants.TILESIZE;
     }
   }
