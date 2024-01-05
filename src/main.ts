@@ -1,6 +1,6 @@
 import constants from "./constants.ts";
 import "./style.css";
-import { Shape, generateRandomShape } from "./shape.ts";
+import { Shape, generateRandomShape, rotateShape } from "./shape.ts";
 import { pressedKeys, DIRECTION, updateKeyUp } from "./controls.ts";
 // fyi: added shape names and such to readme
 
@@ -12,6 +12,7 @@ let objectsCreated: number = 0;
 
 // directional moving slowdown
 // TODO: fix this, feels bad. We kind of cant have hold and keypresses both being nice and instant
+// https://stackoverflow.com/questions/7164735/differentiate-between-key-pressed-and-key-held
 const moveDirectionCounterStatic = 4;
 let directionalMoveCounter: number = moveDirectionCounterStatic;
 
@@ -22,7 +23,7 @@ const timePerTick: number = 1000 / 60;
 let shapeList: Shape[] = [];
 
 // boardMatrice of the shapes that are already set on ground
-let boardMatrice: number[][] = [...Array(constants.HEIGHT / constants.TILESIZE)].map(() => Array(constants.WIDTH / constants.TILESIZE).fill(0));
+export let boardMatrice: number[][] = [...Array(constants.HEIGHT / constants.TILESIZE)].map(() => Array(constants.WIDTH / constants.TILESIZE).fill(0));
 
 setCurrentShape(generateRandomShape());
 
@@ -44,6 +45,9 @@ function moveDirection(): void {
   }
   if (pressedKeys[DIRECTION.DOWNARROW]) {
     moveDown();
+  }
+  if (pressedKeys[DIRECTION.SPACE]) {
+    rotateShape(currentShape());
   }
 }
 
@@ -81,8 +85,6 @@ function tick() {
     directionalMoveCounter = moveDirectionCounterStatic;
   }
 
-
-
   move();
 }
 
@@ -110,7 +112,7 @@ function render() {
 }
 
 // returns the last shape in list which we consider to be the current
-function currentShape(): Shape {
+export function currentShape(): Shape {
   return shapeList[shapeList.length - 1];
 }
 
@@ -124,7 +126,10 @@ function setCurrentShape(shapeObj: Shape) {
 function addShapeToBoard() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
-      // setting row of boardmatrice with the parts that were already done
+
+      if (currentShape().mDefinition[i][j] != 1) {
+        continue;
+      }
 
       let row = currentShape().y / constants.TILESIZE + i;
       let col = currentShape().x / constants.TILESIZE + j;
@@ -138,6 +143,9 @@ function moveLeft() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
       // board row and col to check, with a shift for the one we are trying to check
+      if (currentShape().mDefinition[i][j] != 1) {
+        continue;
+      }
       let row = currentShape().y / constants.TILESIZE + i;
       let col = currentShape().x / constants.TILESIZE + j - 1;
 
@@ -153,6 +161,11 @@ function moveRight() {
   for (let i = 0; i < currentShape().mDefinition.length; i++) {
     for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
       // board row and col to check, with a shift for the one we are trying to check
+      
+      if (currentShape().mDefinition[i][j] != 1) {
+        continue;
+      }
+
       let row = currentShape().y / constants.TILESIZE + i;
       let col = currentShape().x / constants.TILESIZE + j + 1;
 
@@ -206,7 +219,7 @@ function canMoveDown() {
 }
 
 // checks if given row and number would collide with a still shape
-function colliding(row: number, col: number) {
+export function colliding(row: number, col: number) {
   if (boardMatrice.length <= row) {
     return true;
   }

@@ -1,7 +1,5 @@
 import mDefinitions from "./game_blocks.ts";
 import constants from "./constants.ts";
-import mDefintions from "./game_blocks.ts";
-import { boardMatrice, colliding, currentShape } from "./main.ts";
 
 export type Shape = {
   x: number;
@@ -15,70 +13,35 @@ export function shape(x: number, y: number, color: string, mDefinition: number[]
   // TODO: Not rounded to the left what it should be
   let offset = Math.floor(mDefinition[0].length / 2) * constants.TILESIZE;
   x = constants.TILESIZE * 5 - offset;
-
-  // need to create copy or else rotations change all the shapes
-  let mDefinitionCopy: number[][] = [];
-  mDefinitionCopy = mDefinition.map((arr) => {
-    return arr.slice();
-  });
-
-  return { x, y, color, mDefinition: mDefinitionCopy };
+  return { x, y, color, mDefinition };
 }
 
 
-export function rotateShape(shape: Shape): boolean {
-  // i = 0
-  // j = 0, 1, 2
+export function rotateShape(shape: Shape) {
+
   // 00, 01, 02
-  // 02, 12, 22
+  // 10, 00, 01
+  // 20, 10, 00
 
-  // i = 1
-  // j = 0, 1, 2
-  // 10, 11, 12
-  // 01, 11, 21
-
-
-  // i = 2
-  // j = 0, 1, 2
-  // 20, 21, 22
-  // 00, 10, 20
-  // todo: do this inplace without temp
-  // todo: check if rotation would collide with other shapes or out of bounds
-  // todo: create wallkicks if it would collide or block it from rotating
-
-  let temp = [];
-
-  for (let i = 0; i < shape.mDefinition.length; i++) {
-    temp.push(shape.mDefinition[i].slice())
-  }
-
+  console.log("what");
   for (let i = 0; i < shape.mDefinition.length; i++) {
     for (let j = 0; j < shape.mDefinition[i].length; j++) {
-
-      let newColIndex = shape.mDefinition.length - 1 - i;
-      shape.mDefinition[j][newColIndex] = temp[i][j];
-
-      if (shape.mDefinition[j][newColIndex] != 1) {
-        continue;
-      }
-
-      let row = currentShape().y / constants.TILESIZE + i;
-      let col = currentShape().x / constants.TILESIZE + newColIndex;
-
-      if (colliding(row, col)) {
-        shape.mDefinition = temp;
-        return false;
-      }
-
+      
+      let temp = shape.mDefinition[i][j];
+      shape.mDefinition[i][j] = shape.mDefinition[j][i];
+      shape.mDefinition[j][i] = temp;
     }
   }
-  return true;
+
 }
 
 export function generateRandomShape(): Shape {
   let shapeCount = 7;
   let randomShapeNum = Math.floor(Math.random() * shapeCount + 1);
   let randomShape;
+
+
+  return generateJBLOCK();
 
   switch (randomShapeNum) {
     case 1:
