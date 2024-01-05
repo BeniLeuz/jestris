@@ -87,25 +87,26 @@ function tick() {
   move();
 }
 
+
 function render() {
   constants.CANVAS.clearRect(0, 0, constants.WIDTH, constants.HEIGHT);
-  for (let index = 0; index < shapeList.length; index++) {
-    // for every shape we draw the full matrice
-    for (let i = 0; i < shapeList[index].mDefinition.length; i++) {
-      for (let j = 0; j < shapeList[index].mDefinition[i].length; j++) {
-        let tile = shapeList[index];
-
-        // skip possible 0 definitions which are just here to count up the index to know where to draw
-        if (tile.mDefinition[i][j] != 1) {
-          continue;
-        }
-
-        let x = tile.x + j * constants.TILESIZE;
-        let y = tile.y + i * constants.TILESIZE;
-
-        constants.CANVAS.fillStyle = shapeList[index].color;
-        constants.CANVAS.fillRect(x, y, constants.TILESIZE, constants.TILESIZE);
+  for (let i = 0; i < boardMatrice.length; i++) {
+    for (let j = 0; j < boardMatrice[i].length; j++) {
+      if (boardMatrice[i][j] != 0) {
+        constants.CANVAS.fillStyle = "red";
+        constants.CANVAS.fillRect(j * constants.TILESIZE, i * constants.TILESIZE, constants.TILESIZE, constants.TILESIZE);
       }
+    }
+  }
+
+  // render the current moving shape
+  for (let i = 0; i < currentShape().mDefinition.length; i++) {
+    for (let j = 0; j < currentShape().mDefinition[i].length; j++) {
+      if (currentShape().mDefinition[i][j] != 1) {
+        continue;
+      }
+      constants.CANVAS.fillStyle = currentShape().color;
+      constants.CANVAS.fillRect(currentShape().x + j * constants.TILESIZE, currentShape().y + i * constants.TILESIZE, constants.TILESIZE, constants.TILESIZE);
     }
   }
 }
