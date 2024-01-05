@@ -86,8 +86,6 @@ export function generateRandomShape(): Shape {
   return randomShape;
 }
 
-
-// TODO: do functions for all of these blocks, and change the random to work with others
 export function generateIBLOCK() {
   return shape(0, 0, "#00ffff", mDefinitions.IBLOCK);
 }

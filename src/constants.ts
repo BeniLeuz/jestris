@@ -1,6 +1,6 @@
 const C: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement;
 
-let tilesize = 40;
+let tilesize = 35;
 C.width = tilesize * 10;
 C.height = tilesize * 20;
 
