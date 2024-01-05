@@ -57,22 +57,30 @@ export function rotateShape(shape: Shape): boolean {
 
       let newColIndex = shape.mDefinition.length - 1 - i;
       shape.mDefinition[j][newColIndex] = temp[i][j];
+    }
+  }
 
-      if (shape.mDefinition[j][newColIndex] != 1) {
+  if (checkCollision(shape.mDefinition)) {
+    shape.mDefinition = temp;
+  }
+  return true;
+}
+
+function checkCollision(rollBackShape: number[][]): boolean {
+  for(let i = 0; i < currentShape().mDefinition.length; i++) {
+    for(let j = 0; j < currentShape().mDefinition[i].length; j++) {
+      if(currentShape().mDefinition[i][j] != 1) {
         continue;
       }
 
       let row = currentShape().y / constants.TILESIZE + i;
-      let col = currentShape().x / constants.TILESIZE + newColIndex;
-
-      if (colliding(row, col)) {
-        shape.mDefinition = temp;
-        return false;
+      let col = currentShape().x / constants.TILESIZE + j;
+      if(colliding(row, col)) {
+        return true;
       }
-
     }
   }
-  return true;
+  return false;
 }
 
 export function generateRandomShape(): Shape {
